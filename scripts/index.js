@@ -14,6 +14,7 @@ const placeList = document.querySelector('.places__list');
 function createCard(cardData, handleDelete) {
     const cardItemCopy = cardTemplate.querySelector('.card').cloneNode(true);
     cardItemCopy.querySelector('.card__image').src = cardData.link;
+    cardItemCopy.querySelector('.card__image').alt = cardData.name;
     cardItemCopy.querySelector('.card__title').textContent = cardData.name;
 
     cardItemCopy
@@ -25,7 +26,7 @@ function createCard(cardData, handleDelete) {
     return cardItemCopy;
 }
 
-function addCard() {
+function renderInitialCards() {
     initialCards.forEach((cardData) => {
         const cardElement = createCard(cardData, function (e) {
             e.target.closest('.card').remove();
@@ -34,4 +35,4 @@ function addCard() {
     });
 }
 
-addCard();
+renderInitialCards();
