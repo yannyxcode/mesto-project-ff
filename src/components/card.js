@@ -26,6 +26,6 @@ export function removeCard(e) {
     e.target.closest('.card').remove();
 }
 
-export function cardLike(e) {
+function cardLike(e) {
     e.target.classList.toggle('card__like-button_is-active');
 }
