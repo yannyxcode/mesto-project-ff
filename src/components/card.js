@@ -1,6 +1,6 @@
-// Здравствуйте, сможете пожалуйста подробно описать, что нужно исправить и почему,
-// чтобы я сразу разобралась в этой теме и мне было более понятно увидеть на практике
-// как лучше и почему, заранее благодарю за ревью
+// Здравствуйте, внесла изменения
+// Если не сложно, прикрепите пожалуйста ссылки на полезные статьи и доп ресурсы
+// из своего опыта в рамках проекта
 // С Наступающим Новым Годом!
 
 import { putLike, deleteLike, deleteCard } from '../scripts/api';
@@ -24,7 +24,6 @@ export function createCard(
     cardItem.alt = cardData.name;
     cardItemCopy.querySelector('.card__title').textContent = cardData.name;
 
-    // Проверка на наличие likes
     const likes = cardData.likes || [];
     cardLikeCount.textContent = likes.length;
 
@@ -89,27 +88,3 @@ export const cardLike = async (e, cardId) => {
             });
     }
 };
-
-export function renderCard(
-    item,
-    userId,
-    contentBlock,
-    cardLike,
-    removeCard,
-    openImagePopup,
-    isNewCard = false
-) {
-    const cardElement = createCard(
-        item,
-        userId,
-        cardLike,
-        removeCard,
-        openImagePopup
-    );
-
-    if (isNewCard) {
-        contentBlock.prepend(cardElement);
-    } else {
-        contentBlock.append(cardElement);
-    }
-}

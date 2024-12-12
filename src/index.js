@@ -1,10 +1,10 @@
-// Здравствуйте, сможете пожалуйста подробно описать, что нужно исправить и почему,
-// чтобы я сразу разобралась в этой теме и мне было более понятно увидеть на практике
-// как лучше и почему, заранее благодарю за ревью,
+// Здравствуйте, внесла изменения
+// Если не сложно, прикрепите пожалуйста ссылки на полезные статьи и доп ресурсы
+// из своего опыта в рамках проекта
 // С Наступающим Новым Годом!
 
 import './pages/index.css';
-import { removeCard, cardLike, renderCard } from './components/card';
+import { removeCard, cardLike, createCard } from './components/card';
 import { openModal, closeModal } from './components/modal';
 
 import {
@@ -22,7 +22,6 @@ const profileTitle = document.querySelector('.profile__title');
 const profileAvatar = document.querySelector('.profile__image');
 const profileDescription = document.querySelector('.profile__description');
 
-// formElement переименована в profileFormElement для большей ясности
 const profileFormElement = document.querySelector(
     '.popup__form[name="edit-profile"]'
 );
@@ -38,9 +37,9 @@ const editAvatarFormElement = document.querySelector(
     '.popup__form[name="edit-avatar"]'
 );
 
-const editPopup = document.querySelector('.popup_type_edit'); // добавила попап popup_type_edit в общую область видимости, устранила повторное определение
-const newCardPopup = document.querySelector('.popup_type_new-card'); // добавила попап popup_type_new-card в общую область видимости, устранила повторное определение
-const avatarPopup = document.querySelector('.popup_type_avatar'); // добавила попап popup_type_avatar в общую область видимости
+const editPopup = document.querySelector('.popup_type_edit');
+const newCardPopup = document.querySelector('.popup_type_new-card');
+const avatarPopup = document.querySelector('.popup_type_avatar');
 const imagePopup = document.querySelector('.popup_type_image');
 
 const popupImage = imagePopup.querySelector('.popup__image');
@@ -50,10 +49,15 @@ const editButton = document.querySelector('.profile__edit-button');
 const addButton = document.querySelector('.profile__add-button');
 const avatarButton = document.querySelector('.profile__image-overlay');
 
+const profileSubmitButton = profileFormElement.querySelector('.popup__button');
+const avatarSubmitButton =
+    editAvatarFormElement.querySelector('.popup__button');
+const newCardSubmitButton = newCardFormElement.querySelector('.popup__button');
+
 const popups = document.querySelectorAll('.popup');
 
 let userId;
-// вызов функции включения валидации
+
 const validationConfig = {
     formSelector: '.popup__form',
     inputSelector: '.popup__input',
@@ -82,9 +86,8 @@ popups.forEach((popup) => {
     });
 });
 
-// функция рендера загрузки
-function renderLoading(isLoading, button) {
-    button.textContent = isLoading ? 'Сохранение...' : 'Сохранить';
+function renderLoading(button, text) {
+    button.textContent = text;
 }
 
 function fillProfileInfo(userInfo) {
@@ -128,6 +131,30 @@ const renderInitialCards = (initialCards, userId) => {
     });
 };
 
+function renderCard(
+    item,
+    userId,
+    contentBlock,
+    cardLike,
+    removeCard,
+    openImagePopup,
+    isNewCard = false
+) {
+    const cardElement = createCard(
+        item,
+        userId,
+        cardLike,
+        removeCard,
+        openImagePopup
+    );
+
+    if (isNewCard) {
+        contentBlock.prepend(cardElement);
+    } else {
+        contentBlock.append(cardElement);
+    }
+}
+
 function openImagePopup(imgUrl, imgAlt, imgTitle) {
     popupImage.src = imgUrl;
     popupImage.alt = imgAlt;
@@ -142,7 +169,7 @@ function handleProfileFormSubmit(e) {
     const newName = nameInput.value;
     const newJob = jobInput.value;
 
-    renderLoading(true, profileFormElement.querySelector('.popup__button'));
+    renderLoading(profileSubmitButton, 'Сохранение...');
 
     updateProfileUser({ name: newName, about: newJob })
         .then((updatedProfile) => {
@@ -154,10 +181,7 @@ function handleProfileFormSubmit(e) {
             console.log(err);
         })
         .finally(() => {
-            renderLoading(
-                false,
-                profileFormElement.querySelector('.popup__button')
-            );
+            renderLoading(profileSubmitButton, 'Сохранить');
             clearValidation(profileFormElement, validationConfig);
         });
 }
@@ -165,27 +189,24 @@ function handleProfileFormSubmit(e) {
 function handleAvatarFormSubmit(e) {
     e.preventDefault();
 
-    renderLoading(true, editAvatarFormElement.querySelector('.popup__button'));
+    renderLoading(avatarSubmitButton, 'Сохранение...');
+
     updateAvatar(editAvatarFormElement.link.value)
         .then((updatedProfile) => {
             fillProfileInfo(updatedProfile);
             closeModal(avatarPopup);
-            clearValidation(editAvatarFormElement, validationConfig);
         })
         .catch((err) => {
             console.log(err);
         })
         .finally(() => {
-            renderLoading(
-                false,
-                editAvatarFormElement.querySelector('.popup__button')
-            );
+            renderLoading(avatarSubmitButton, 'Сохранить');
         });
 }
 
 const handleNewCardFormSubmit = async (e) => {
     e.preventDefault();
-    renderLoading(true, newCardFormElement.querySelector('.popup__button'));
+    renderLoading(newCardSubmitButton, 'Создание...');
 
     const name = newCardFormElement.elements['place-name'].value;
     const link = newCardFormElement.elements.link.value;
@@ -209,10 +230,7 @@ const handleNewCardFormSubmit = async (e) => {
             console.log(err);
         })
         .finally(() => {
-            renderLoading(
-                false,
-                newCardFormElement.querySelector('.popup__button')
-            );
+            renderLoading(newCardSubmitButton, 'Сохранить');
         });
 };
 
